@@ -47,5 +47,5 @@ for line in sys.stdin:
 #Print 
 for k in cat:
 	m1, m2 = k.split()
-	print m1, m2, cat[k]
+	print m1, '\t',m2,'\t', cat[k]
 

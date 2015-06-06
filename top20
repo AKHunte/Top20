@@ -1,0 +1,34 @@
+#!/bin/bash
+
+#Written by: Aisha HUnte
+# June 5, 2015
+
+#This program reads in the input files which is a list of a pair of movies and the 
+#frequency of users that liked the pair of movies
+#Each record is considered a three field key 
+#The records are partitioned between the reducers based of the freqency (the thrid field)
+#Within each reducer the values are sorted by ascending frequency
+#The reducer lists the top 20 liked pairs of movies
+
+
+
+#Remove old files
+hadoop fs -rmr output/MovieLens/top20/1M/stripes/
+
+
+#Run again
+hadoop jar /apps/hadoop-2/share/hadoop/tools/lib/hadoop-streaming-2.4.1.jar \
+-D mapred.output.key.comparator.class=org.apache.hadoop.mapred.lib.KeyFieldBasedComparator \
+-D stream.num.map.output.key.fields=3 \
+-D mapred.text.key.partitioner.options=-k3 \
+-D mapred.text.key.comparator.options=-k3,3n \
+-D mapred.map.tasks=6 \
+-D mapred.reduce.tasks=6 \
+-input /user/ahunte/output/MovieLens/count/stripes/1M/ \
+-output output/MovieLens/top20/1M/stripes/ \
+-mapper cat \
+-reducer 'tail -20' \
+-partitioner org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner
+
+#-cacheFile input/MovieLens/r/R.txt#RFile -mapper cat  -reducer red1.py -input  output/rec/35/* -output output/rec/56
+
